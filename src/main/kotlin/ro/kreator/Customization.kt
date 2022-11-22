@@ -8,9 +8,15 @@ interface Customizer {
     fun register() = this::class.java.methods
             .filter { it.parameters.isEmpty() && it.name.startsWith("get") }
             .forEach { it.invoke(this) }
+
+    fun <A, B, C> ((A,B)->C).get(a: A, b: B) = this to (a to b)
+
 }
 
-fun <T> customize(constructorBlock: Creator.() -> T) = DelegateNoArg(constructorBlock)
+fun <T> customize(constructorBlock: context(PropertyBased) Creator.() -> T): DelegateNoArg<T> {
+    return DelegateNoArg(constructorBlock)
+}
+//fun <A,B, T> customize(g: context(Creator) ((A, B) -> T) -> T) = Delegate2(g)
 
 fun registerCustomizations(vararg customizations: Customization) = listOf(customizations)
 
@@ -19,7 +25,7 @@ class customize<T> {
 
     fun using(fn: () -> T, g: Creator.(() -> T) -> T) = Delegate0(fn, g)
     fun <A> using(fn: (A) -> T, g: Creator.((A) -> T) -> T) = Delegate1(fn, g)
-    fun <A, B> using(fn: (A, B) -> T, g: Creator.((A, B) -> T) -> T) = Delegate2(fn, g)
+//    fun <A, B> using(fn: (A, B) -> T, g: context(Creator) ((A, B) -> T) -> T) = Delegate2(fn, g)
     fun <A, B, C> using(fn: (A, B, C) -> T, g: Creator.((A, B, C) -> T) -> T) = Delegate3(fn, g)
     fun <A, B, C, D> using(fn: (A, B, C, D) -> T, g: Creator.((A, B, C, D) -> T) -> T) = Delegate4(fn, g)
     fun <A, B, C, D, E> using(fn: (A, B, C, D, E) -> T, g: Creator.((A, B, C, D, E) -> T) -> T) = Delegate5(fn, g)
@@ -43,11 +49,15 @@ class customize<T> {
         operator fun getValue(a: Any, property: KProperty<*>): Customization
     }
 
-    class DelegateNoArg<T>(val constructorBlock: Creator.() -> T) : Customization {
+    class DelegateNoArg<T>(val constructorBlock:  context(PropertyBased) Creator.() -> T) : Customization {
 
         override operator fun getValue(a: Any, property: KProperty<*>): DelegateNoArg<T> {
             val type = property.returnType.arguments.last().type!!
-            ObjectFactory[type] = { _, _, kproperty, token -> Creator(type, token, kproperty).constructorBlock() as Any }
+            ObjectFactory[type] = { _, _, kproperty, token ->
+                val propertyBased =PropertyBased(token, mutableMapOf())
+                val creator = Creator(type, token, kproperty)
+                constructorBlock(propertyBased, creator) as Any
+            }
             return this
         }
     }
@@ -61,18 +71,18 @@ class customize<T> {
         }
     }
 
-    class Delegate1<A, T>(val constructor: (A) -> T, val constructorBlock: Creator.((A) -> T) -> T) : Customization {
+    class Delegate1<A, T>(val constructor: (A) -> T, val constructorBlock: context(Creator) ((A) -> T) -> T) : Customization {
         override operator fun getValue(a: Any, property: KProperty<*>): Delegate1<A, T> {
             val type = property.returnType.arguments.last().type!!
-            ObjectFactory[type] = { _, _, kproperty, token -> Creator(type, token, kproperty).constructorBlock(constructor) as Any }
+            ObjectFactory[type] = { _, _, kproperty, token -> constructorBlock(Creator(type, token, kproperty), constructor) as Any }
             return this
         }
     }
 
-    class Delegate2<A, B, T>(val constructor: (A, B) -> T, val constructorBlock: Creator.((A, B) -> T) -> T) : Customization {
-        override operator fun getValue(a: Any, property: KProperty<*>): Delegate2<A, B, T> {
+    class Delegate<T>(val constructor: () -> T, val constructorBlock: Creator.() -> T) : Customization {
+        override operator fun getValue(a: Any, property: KProperty<*>): Delegate<T> {
             val type = property.returnType.arguments.last().type!!
-            ObjectFactory[type] = { _, _, kproperty, token -> Creator(type, token, kproperty).constructorBlock(constructor) as Any }
+            ObjectFactory[type] = { _, _, kproperty, token -> Creator(type, token, kproperty).constructorBlock() as Any }
             return this
         }
     }

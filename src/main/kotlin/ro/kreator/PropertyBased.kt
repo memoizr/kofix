@@ -23,7 +23,7 @@ fun forAll(numberOfRuns: Int = 100, block: PropertyBased.() -> Unit) {
 
 internal class Property(token: Token, countOfInvocations: MutableMap<KType, Int>) : PropertyBased(token, countOfInvocations)
 
-sealed class PropertyBased(val token: Token, val countOfInvocations: MutableMap<KType, Int>) : Reify() {
+open class PropertyBased(val token: Token, val countOfInvocations: MutableMap<KType, Int>) : Reify() {
 
     fun KType.store() = this.apply {
         countOfInvocations[this]?.let { countOfInvocations[this] = it.inc() } ?: { countOfInvocations[this] = 0 }()
@@ -32,11 +32,18 @@ sealed class PropertyBased(val token: Token, val countOfInvocations: MutableMap<
     fun KType.tokenize(token: Token) = token with (countOfInvocations[this]?.hash ?: 0)
 
     inline fun <reified T : Any> a(): T {
+        println(T::class.javaObjectType)
         val type = T::class().type.store()
         return new(type, type.tokenize(token), null)
     }
 
+
+    inline fun <reified T : Any> an(): T = a<T>()
+
+    inline fun <reified T : Any> any(): T = a<T>()
+
     inline fun <reified T : Any> a(t: TypedKType<*>): T {
+        println(t)
         val type = T::class(t).type.store()
         return new(type, type.tokenize(token), null)
     }
@@ -80,7 +87,7 @@ class Creator(val type: KType, token: Token, val property: KProperty<*>?) : Prop
 
     object any
 
-    fun <T> any(): T = any as T
+//    fun <T> any(): T = any as T
 
     operator inline fun <reified A, reified R : Any> ((A) -> R).get(a: A = any()): R {
         val params = getParameters(type, A::class)
