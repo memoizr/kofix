@@ -430,7 +430,7 @@ class PerformanceTest {
             a200
             a201
             a202
-        }.print()
+        }
     }
 
 

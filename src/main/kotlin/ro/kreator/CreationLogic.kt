@@ -2,7 +2,6 @@ package ro.kreator
 
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ClassInfo
-import io.github.classgraph.ClassInfoList
 import io.github.classgraph.ScanResult
 import javassist.util.proxy.ProxyFactory
 import javassist.util.proxy.ProxyObject
@@ -30,9 +29,6 @@ import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.jvmName
-import kotlin.system.measureTimeMillis
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTimedValue
 
 
 typealias Token = Long
@@ -52,16 +48,16 @@ internal object CreationLogic : Reify() {
 
         val o = ObjectFactory
 
-        o[kotlin.String::class().type] = { _, _, kproperty, token -> aString(token) }
-        o[kotlin.String::class().type] = { _, _, kproperty, token -> aString(token) }
-        o[kotlin.Byte::class().type] = { _, _, kproperty, token -> aByte(token) }
-        o[kotlin.Int::class().type] = { _, _, kproperty, token -> anInt(token) }
-        o[kotlin.Long::class().type] = { _, _, kproperty, token -> aLong(token) }
-        o[kotlin.Double::class().type] = { _, _, kproperty, token -> aDouble(token) }
-        o[kotlin.Short::class().type] = { _, _, kproperty, token -> aShort(token) }
-        o[kotlin.Float::class().type] = { _, _, kproperty, token -> aFloat(token) }
-        o[kotlin.Boolean::class().type] = { _, _, kproperty, token -> aBoolean(token) }
-        o[kotlin.Char::class().type] = { _, _, kproperty, token -> aChar(token) }
+        o[String::class().type] = { _, _, _, token -> aString(token) }
+        o[String::class().type] = { _, _, _, token -> aString(token) }
+        o[Byte::class().type] = { _, _, _, token -> aByte(token) }
+        o[Int::class().type] = { _, _, _, token -> anInt(token) }
+        o[Long::class().type] = { _, _, _, token -> aLong(token) }
+        o[Double::class().type] = { _, _, _, token -> aDouble(token) }
+        o[Short::class().type] = { _, _, _, token -> aShort(token) }
+        o[Float::class().type] = { _, _, _, token -> aFloat(token) }
+        o[Boolean::class().type] = { _, _, _, token -> aBoolean(token) }
+        o[Char::class().type] = { _, _, _, token -> aChar(token) }
         o[IntArray::class(Int::class()).type] =
             { _, past, kproperty, token -> list(Int::class, kproperty, token, past).toIntArray() }
         o[Array<Int>::class(Int::class()).type] =
@@ -97,7 +93,7 @@ internal object CreationLogic : Reify() {
 
         o[List::class.starProjectedType] = { type, past, kproperty, token -> list(type, kproperty, token, past) }
         o[Set::class.starProjectedType] = { type, past, kproperty, token -> list(type, kproperty, token, past).toSet() }
-        o[kotlin.collections.Map::class.starProjectedType] =
+        o[Map::class.starProjectedType] =
             { type, past, kproperty, token -> map(type, kproperty, token, past) }
 
         o[File::class.starProjectedType] = { _, _, kproperty, token -> File(aString(token)) }
@@ -284,15 +280,15 @@ internal object CreationLogic : Reify() {
         val proxy = factory.createClass().constructors.filter { !it.isSynthetic && it.parameterCount == 0 }.first()
             .newInstance()
 
-        (proxy as ProxyObject).setHandler({ proxy, method, proceed, obj ->
+        (proxy as ProxyObject).setHandler { proxxy, method, _, obj ->
             when (method.name) {
-                Any::hashCode.javaMethod?.name -> proxy.toString().hashCode()
-                Any::equals.javaMethod?.name -> proxy.toString() == obj[0].toString()
+                Any::hashCode.javaMethod?.name -> proxxy.toString().hashCode()
+                Any::equals.javaMethod?.name -> proxxy.toString() == obj[0].toString()
                 Any::toString.javaMethod?.name -> "\$RandomImplementation$${klass.simpleName}"
                 else -> methodReturnTypes[method]?.let { instantiateRandomClass(it, token, past, kProperty) }
                     ?: instantiateRandomClass(method.returnType.kotlin.createType(), token, past, kProperty)
             }
-        })
+        }
         return proxy
     }
 

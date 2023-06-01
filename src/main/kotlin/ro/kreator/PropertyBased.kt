@@ -32,7 +32,6 @@ open class PropertyBased(val token: Token, val countOfInvocations: MutableMap<KT
     fun KType.tokenize(token: Token) = token with (countOfInvocations[this]?.hash ?: 0)
 
     inline fun <reified T : Any> a(): T {
-        println(T::class.javaObjectType)
         val type = T::class().type.store()
         return new(type, type.tokenize(token), null)
     }
@@ -43,7 +42,6 @@ open class PropertyBased(val token: Token, val countOfInvocations: MutableMap<KT
     inline fun <reified T : Any> any(): T = a<T>()
 
     inline fun <reified T : Any> a(t: TypedKType<*>): T {
-        println(t)
         val type = T::class(t).type.store()
         return new(type, type.tokenize(token), null)
     }
