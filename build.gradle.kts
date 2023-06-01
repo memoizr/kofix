@@ -47,7 +47,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.memoizr"
             artifactId = "momster"
-            version = "1.1"
+            version = "1.0"
 
             from(components["java"])
         }
