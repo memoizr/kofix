@@ -39,6 +39,7 @@ tasks.withType<JavaCompile>() {
         "--add-opens=java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED",
         "--add-exports=java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED"
     )
+    targetCompatibility = "17"
 }
 
 
