@@ -6,7 +6,7 @@ plugins {
     `java-library`
 }
 
-group = "memoizr"
+group = "com.memoizr"
 version = "1.0"
 
 repositories {
@@ -40,10 +40,18 @@ tasks.withType<JavaCompile>() {
         "--add-exports=java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED"
     )
 }
-afterEvaluate {
-    publishing {
-        publications {
+
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "com.memoizr"
+            artifactId = "momster"
+            version = "1.1"
+
+            from(components["java"])
         }
     }
 }
+
 
