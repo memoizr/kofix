@@ -98,6 +98,7 @@ internal object CreationLogic : Reify() {
 
         o[File::class.starProjectedType] = { _, _, kproperty, token -> File(aString(token)) }
         o[Date::class.starProjectedType] = { _, _, kproperty, token -> Date(aLong(token)) }
+        o[UUID::class.starProjectedType] = { _, _, kproperty, token -> UUID.randomUUID() }
     }
 
     internal object ObjectFactory {

@@ -28,6 +28,7 @@ class RandomGenerationTest {
     val aJavaClassWithList by aRandom<JavaClassWithList>()
     val aClassWithPrimitives by aRandom<ClassWithPrimitives>()
     val aDate by aRandom<Date>()
+    val aUUID by aRandom<UUID>()
 
     @Before
     fun setUp() {
@@ -44,6 +45,11 @@ class RandomGenerationTest {
     @Test
     fun `creates a date`() {
         expect that aDate isInstance of<Date>()
+    }
+
+    @Test
+    fun `creates an UUID`() {
+        expect that aUUID isInstance of<UUID>()
     }
 
     @Test
