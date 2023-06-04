@@ -11,6 +11,7 @@ import java.lang.reflect.Array.*
 import java.lang.reflect.Method
 import java.lang.reflect.TypeVariable
 import java.security.MessageDigest
+import java.time.Instant
 import java.util.*
 import java.util.Collections.*
 import kotlin.collections.set
@@ -98,6 +99,7 @@ internal object CreationLogic : Reify() {
 
         o[File::class.starProjectedType] = { _, _, kproperty, token -> File(aString(token)) }
         o[Date::class.starProjectedType] = { _, _, kproperty, token -> Date(aLong(token)) }
+        o[Instant::class.starProjectedType] = { _, _, kproperty, token -> Instant.ofEpochMilli(aLong(token)) }
         o[UUID::class.starProjectedType] = { _, _, kproperty, token -> UUID.randomUUID() }
     }
 
