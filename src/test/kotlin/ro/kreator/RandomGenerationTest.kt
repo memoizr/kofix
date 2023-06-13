@@ -112,11 +112,10 @@ class RandomGenerationTest {
         expect that aClassWithEnum.enum isInstance of<TheEnum>()
     }
 
-    val x by customize<BigDecimal>().using<Long>(::BigDecimal) { it[any()] }
 
     @Test
     fun `it allows to customize object creation`() {
-        x
+        customize<BigDecimal>() { BigDecimal(a<Int>()) }
         expect that aClassWithBigDecimal isInstance of<ClassWithBigDecimal>()
     }
 
@@ -148,6 +147,7 @@ class RandomGenerationTest {
     }
 
     val listOfMinMaxSize by aRandomListOf<SimpleClass>(minSize = 2, maxSize = 3)
+
     @Test
     fun `it generates list of min max size`() {
         (1..1000).map {
@@ -333,18 +333,18 @@ class RandomGenerationTest {
     data class User(val username: Username, val id: Id)
 
     val user by aRandom<User>()
-    val customUsername by customize { Username("${property?.name}_username_${a<String>()}")}
-    val customId by customize { Id("${property?.name}_id_${a<String>()}")}
 
     val users by aRandomListOf<User>()
 
     init {
-        registerCustomizations(customUsername, customId)
+        customize { Username("${property?.name}_username_${a<String>()}") }
+        customize { Id("${property?.name}_id_${a<String>()}") }
     }
+
     @Test
     fun `includes more descriptive strings`() {
         expect that users.map { it.id.value }.toSet().size isEqualTo users.size
-        expect that user.username.value contains  "user_username"
-        expect that user.id.value contains  "user_id"
+        expect that user.username.value contains "user_username"
+        expect that user.id.value contains "user_id"
     }
 }

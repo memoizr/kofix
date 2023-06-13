@@ -4,8 +4,8 @@ import ro.kreator.CreationLogic.aList
 import ro.kreator.CreationLogic.hash
 import ro.kreator.CreationLogic.with
 import java.util.Collections.*
-import kotlin.reflect.KProperty
-import kotlin.reflect.KType
+import kotlin.random.Random
+import kotlin.reflect.*
 
 /**
  * A delegate which creates a random list of the specified type. It must be used as a delegate
@@ -122,4 +122,42 @@ class aRandomFromType<out T : Any>(private val type: KType, private val customiz
 }
 
 fun instantiateRandomClass(type: KType, kProperty: KProperty<*>?, token: Long = 0): Any? = CreationLogic.instantiateRandomClass(type, token, kProperty = kProperty)
+
+
+object _VirtualKProperty: KProperty<Any> {
+    override val name: String
+        get() = "virtual"
+    override val annotations: List<Annotation>
+        get() = TODO("Not yet implemented")
+    override val getter: KProperty.Getter<Any>
+        get() = TODO("Not yet implemented")
+    override val isAbstract: Boolean
+        get() = TODO("Not yet implemented")
+    override val isConst: Boolean
+        get() = TODO("Not yet implemented")
+    override val isFinal: Boolean
+        get() = TODO("Not yet implemented")
+    override val isLateinit: Boolean
+        get() = TODO("Not yet implemented")
+    override val isOpen: Boolean
+        get() = TODO("Not yet implemented")
+    override val isSuspend: Boolean
+        get() = TODO("Not yet implemented")
+    override val parameters: List<KParameter>
+        get() = TODO("Not yet implemented")
+    override val returnType: KType
+        get() = TODO("Not yet implemented")
+    override val typeParameters: List<KTypeParameter>
+        get() = TODO("Not yet implemented")
+    override val visibility: KVisibility?
+        get() = TODO("Not yet implemented")
+
+    override fun call(vararg args: Any?): Any {
+        TODO("Not yet implemented")
+    }
+
+    override fun callBy(args: Map<KParameter, Any?>): Any {
+        TODO("Not yet implemented")
+    }
+}
 
