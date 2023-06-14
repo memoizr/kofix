@@ -15,12 +15,7 @@ import java.time.Instant
 import java.util.*
 import java.util.Collections.*
 import kotlin.collections.set
-import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
-import kotlin.reflect.KProperty
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeProjection
+import kotlin.reflect.*
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.full.valueParameters
@@ -34,7 +29,7 @@ import kotlin.reflect.jvm.jvmName
 
 typealias Token = Long
 
-internal object CreationLogic : Reify() {
+internal object CreationLogic {
     init {
         Seed.seed
         fun list(type: KType, kProperty: KProperty<*>?, token: Token, past: Set<KClass<*>>) =
@@ -49,58 +44,57 @@ internal object CreationLogic : Reify() {
 
         val o = ObjectFactory
 
-        o[String::class().type] = { _, _, _, token -> aString(token) }
-        o[String::class().type] = { _, _, _, token -> aString(token) }
-        o[Byte::class().type] = { _, _, _, token -> aByte(token) }
-        o[Int::class().type] = { _, _, _, token -> anInt(token) }
-        o[Long::class().type] = { _, _, _, token -> aLong(token) }
-        o[Double::class().type] = { _, _, _, token -> aDouble(token) }
-        o[Short::class().type] = { _, _, _, token -> aShort(token) }
-        o[Float::class().type] = { _, _, _, token -> aFloat(token) }
-        o[Boolean::class().type] = { _, _, _, token -> aBoolean(token) }
-        o[Char::class().type] = { _, _, _, token -> aChar(token) }
-        o[IntArray::class(Int::class()).type] =
+        o[typeOf<String>()] = { _, _, _, token -> aString(token) }
+        o[typeOf<Byte>()] = { _, _, _, token -> aByte(token) }
+        o[typeOf<Int>()] = { _, _, _, token -> anInt(token) }
+        o[typeOf<Long>()] = { _, _, _, token -> aLong(token) }
+        o[typeOf<Double>()] = { _, _, _, token -> aDouble(token) }
+        o[typeOf<Short>()] = { _, _, _, token -> aShort(token) }
+        o[typeOf<Float>()] = { _, _, _, token -> aFloat(token) }
+        o[typeOf<Boolean>()] = { _, _, _, token -> aBoolean(token) }
+        o[typeOf<Char>()] = { _, _, _, token -> aChar(token) }
+        o[typeOf<IntArray>()] =
             { _, past, kproperty, token -> list(Int::class, kproperty, token, past).toIntArray() }
-        o[Array<Int>::class(Int::class()).type] =
+        o[typeOf<Array<Int>>()] =
             { _, past, kproperty, token -> list(Int::class, kproperty, token, past).toTypedArray() }
-        o[ShortArray::class(Short::class()).type] =
+        o[typeOf<ShortArray>()] =
             { _, past, kproperty, token -> list(Short::class, kproperty, token, past).toShortArray() }
-        o[Array<Short>::class(Short::class()).type] =
+        o[typeOf<Array<Short>>()] =
             { _, past, kproperty, token -> list(Short::class, kproperty, token, past).toTypedArray() }
-        o[LongArray::class(Long::class()).type] =
+        o[typeOf<LongArray>()] =
             { _, past, kproperty, token -> list(Long::class, kproperty, token, past).toLongArray() }
-        o[Array<Long>::class(Long::class()).type] =
+        o[typeOf<Array<Long>>()] =
             { _, past, kproperty, token -> list(Long::class, kproperty, token, past).toTypedArray() }
-        o[FloatArray::class(Float::class()).type] =
+        o[typeOf<FloatArray>()] =
             { _, past, kproperty, token -> list(Float::class, kproperty, token, past).toFloatArray() }
-        o[Array<Float>::class(Float::class()).type] =
+        o[typeOf<Array<Float>>()] =
             { _, past, kproperty, token -> list(Float::class, kproperty, token, past).toTypedArray() }
-        o[DoubleArray::class(Double::class()).type] =
+        o[typeOf<DoubleArray>()] =
             { _, past, kproperty, token -> list(Double::class, kproperty, token, past).toDoubleArray() }
-        o[Array<Double>::class(Double::class()).type] =
+        o[typeOf<Array<Double>>()] =
             { _, past, kproperty, token -> list(Double::class, kproperty, token, past).toTypedArray() }
-        o[BooleanArray::class(Boolean::class()).type] =
+        o[typeOf<BooleanArray>()] =
             { _, past, kproperty, token -> list(Boolean::class, kproperty, token, past).toBooleanArray() }
-        o[Array<Boolean>::class(Boolean::class()).type] =
+        o[typeOf<Array<Boolean>>()] =
             { _, past, kproperty, token -> list(Boolean::class, kproperty, token, past).toTypedArray() }
-        o[ByteArray::class(Byte::class()).type] =
+        o[typeOf<ByteArray>()] =
             { _, past, kproperty, token -> list(Byte::class, kproperty, token, past).toByteArray() }
-        o[Array<Byte>::class(Byte::class()).type] =
+        o[typeOf<Array<Byte>>()] =
             { _, past, kproperty, token -> list(Byte::class, kproperty, token, past).toTypedArray() }
-        o[CharArray::class(Char::class()).type] =
+        o[typeOf<CharArray>()] =
             { _, past, kproperty, token -> list(Char::class, kproperty, token, past).toCharArray() }
-        o[Array<Char>::class(Char::class()).type] =
+        o[typeOf<Array<Char>>()] =
             { _, past, kproperty, token -> list(Char::class, kproperty, token, past).toTypedArray() }
 
-        o[List::class.starProjectedType] = { type, past, kproperty, token -> list(type, kproperty, token, past) }
-        o[Set::class.starProjectedType] = { type, past, kproperty, token -> list(type, kproperty, token, past).toSet() }
-        o[Map::class.starProjectedType] =
+        o[typeOf<List<*>>()] = { type, past, kproperty, token -> list(type, kproperty, token, past) }
+        o[typeOf<Set<*>>()] = { type, past, kproperty, token -> list(type, kproperty, token, past).toSet() }
+        o[typeOf<Map<*,*>>()] =
             { type, past, kproperty, token -> map(type, kproperty, token, past) }
 
-        o[File::class.starProjectedType] = { _, _, kproperty, token -> File(aString(token)) }
-        o[Date::class.starProjectedType] = { _, _, kproperty, token -> Date(aLong(token)) }
-        o[Instant::class.starProjectedType] = { _, _, kproperty, token -> Instant.ofEpochMilli(aLong(token)) }
-        o[UUID::class.starProjectedType] = { _, _, kproperty, token -> UUID.randomUUID() }
+        o[typeOf<File>()] = { _, _, kproperty, token -> File(aString(token)) }
+        o[typeOf<Date>()] = { _, _, kproperty, token -> Date(aLong(token)) }
+        o[typeOf<Instant>()] = { _, _, kproperty, token -> Instant.ofEpochMilli(aLong(token)) }
+        o[typeOf<UUID>()] = { _, _, kproperty, token -> UUID.randomUUID() }
     }
 
     internal object ObjectFactory {
@@ -139,7 +133,7 @@ internal object CreationLogic : Reify() {
 
     private val md = MessageDigest.getInstance("MD5")
 
-    internal val Any.hash: Long
+    val Any.hash: Long
         get() {
             val array = md.digest(toString().toByteArray())
 

@@ -336,13 +336,11 @@ class RandomGenerationTest {
 
     val users by aRandomListOf<User>()
 
-    init {
-        customize { Username("${property?.name}_username_${a<String>()}") }
-        customize { Id("${property?.name}_id_${a<String>()}") }
-    }
-
     @Test
     fun `includes more descriptive strings`() {
+        customize { Username("${property.name}_username_${a<String>()}_${a<String>()}") }
+        customize { Id("${property.name}_id_${a<String>()}") }
+
         expect that users.map { it.id.value }.toSet().size isEqualTo users.size
         expect that user.username.value contains "user_username"
         expect that user.id.value contains "user_id"

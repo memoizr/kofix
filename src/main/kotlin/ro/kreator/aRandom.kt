@@ -16,10 +16,11 @@ import kotlin.reflect.*
  * It works with generic types as well.
  */
 class aRandomListOf<out T : Any>(
-        private val size: Int? = null,
-        private val minSize: Int = 1,
-        private val maxSize: Int = 5,
-        private val customization: List<T>.() -> List<T> = { this }) {
+    private val size: Int? = null,
+    private val minSize: Int = 1,
+    private val maxSize: Int = 5,
+    private val customization: List<T>.() -> List<T> = { this }
+) {
 
     init {
         CreationLogic
@@ -29,20 +30,19 @@ class aRandomListOf<out T : Any>(
     private var lastSeed = Seed.seed
 
     operator fun getValue(host: Any, property: KProperty<*>): List<T> {
-        registerCustomizations(host)
         return if (t != null && lastSeed == Seed.seed) t!!
         else {
             val typeOfListItems = property.returnType.arguments.first().type!!
             val hostClassName = host::class.java.canonicalName
             val propertyName = property.name
             val list = aList(
-                    typeOfListItems,
-                    hostClassName.hash with propertyName.hash,
-                    emptySet(),
-                    kProperty = property,
-                    size = size?.dec(),
-                    minSize = minSize,
-                    maxSize = maxSize
+                typeOfListItems,
+                hostClassName.hash with propertyName.hash,
+                emptySet(),
+                kProperty = property,
+                size = size?.dec(),
+                minSize = minSize,
+                maxSize = maxSize
             )
             (list as List<T>).let {
                 lastSeed = Seed.seed
@@ -64,44 +64,7 @@ class aRandomListOf<out T : Any>(
  */
 class aRandom<out T : Any>(private val customization: T.() -> T = { this }) {
 
-    init {
-        CreationLogic
-    }
-
-    private var t: T? = null
-    private var lastSeed = Seed.seed
-
-    operator fun getValue(hostClass: Any, property: KProperty<*>): T {
-        registerCustomizations(hostClass)
-        return if (t != null && lastSeed == Seed.seed) t!!
-        else instantiateRandomClass(property.returnType, property, hostClass::class.java.canonicalName.hash with property.name.hash).let {
-            lastSeed = Seed.seed
-            val res = it as T
-            t = customization(res)
-            return t as T
-        }
-    }
-}
-
-private fun registerCustomizations(hostClass: Any) {
-    hostClass::class.java.methods.toList().filter {
-        it.returnType == Generator0::class.java
-                || it.returnType == Generator1::class.java
-    }.forEach {
-        it.isAccessible = true
-        it.invoke(hostClass)
-    }
-}
-
-/**
- * A delegate which creates a random object of the specified type. It must be used as a delegate
- * using the delegate property syntax:
- *
- * val aUser by aRandom<User>()
- *
- * It works with generic types as well.
- */
-class aRandomFromType<out T : Any>(private val type: KType, private val customization: T.() -> T = { this }) {
+    val stackWalker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
 
     init {
         CreationLogic
@@ -112,19 +75,39 @@ class aRandomFromType<out T : Any>(private val type: KType, private val customiz
 
     operator fun getValue(hostClass: Any, property: KProperty<*>): T {
         return if (t != null && lastSeed == Seed.seed) t!!
-        else instantiateRandomClass(type, property, hostClass::class.java.canonicalName.hash with property.name.hash).let {
+        else instantiateRandomClass(
+            property.returnType,
+            property,
+            hostClass::class.java.canonicalName.hash with property.name.hash
+        ).let {
             lastSeed = Seed.seed
             val res = it as T
             t = customization(res)
             return t as T
         }
     }
+
+    operator fun getValue(hostClass: Nothing?, property: KProperty<*>): T {
+        return if (t != null && lastSeed == Seed.seed) t!!
+        else {
+            instantiateRandomClass(
+                property.returnType,
+                property,
+                stackWalker.walk{it.skip(1).findFirst().get().declaringClass}.canonicalName.hash with property.name.hash
+            ).let {
+                lastSeed = Seed.seed
+                val res = it as T
+                t = customization(res)
+                return t as T
+            }
+        }
+    }
 }
 
-fun instantiateRandomClass(type: KType, kProperty: KProperty<*>?, token: Long = 0): Any? = CreationLogic.instantiateRandomClass(type, token, kProperty = kProperty)
+fun instantiateRandomClass(type: KType, kProperty: KProperty<*>?, token: Long = 0): Any? =
+    CreationLogic.instantiateRandomClass(type, token, kProperty = kProperty)
 
-
-object _VirtualKProperty: KProperty<Any> {
+object _VirtualKProperty : KProperty<Any> {
     override val name: String
         get() = "virtual"
     override val annotations: List<Annotation>
