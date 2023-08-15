@@ -10,6 +10,6 @@ object Seed {
         }
 
     init {
-        println("Random-Object-Kreator - Setting seed: $seed")
+        println("Random-Object-Kreator - Setting seed (system-time): $seed")
     }
 }

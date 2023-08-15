@@ -97,7 +97,9 @@ internal object CreationLogic {
         o[typeOf<File>()] = { _, _, kproperty, token -> File(aString(token)) }
         o[typeOf<Date>()] = { _, _, kproperty, token -> Date(aLong(token)) }
         o[typeOf<Instant>()] = { _, _, kproperty, token ->
-            Instant.ofEpochMilli(Seed.seed + aLong(token, -ofDays(100).toMillis(), ofDays(100).toMillis())).truncatedTo(ChronoUnit.MICROS)
+            Instant.ofEpochMilli(Seed.seed)
+                .plusNanos(aLong(token, -ofDays(100).toNanos(), ofDays(100).toNanos()))
+                .truncatedTo(ChronoUnit.MICROS)
         }
         o[typeOf<UUID>()] = { _, _, kproperty, token -> UUID.randomUUID() }
     }
