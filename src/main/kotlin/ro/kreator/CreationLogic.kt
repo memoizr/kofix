@@ -11,7 +11,10 @@ import java.lang.reflect.Array.*
 import java.lang.reflect.Method
 import java.lang.reflect.TypeVariable
 import java.security.MessageDigest
+import java.time.Duration
+import java.time.Duration.ofDays
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.Collections.*
 import kotlin.collections.set
@@ -88,12 +91,14 @@ internal object CreationLogic {
 
         o[typeOf<List<*>>()] = { type, past, kproperty, token -> list(type, kproperty, token, past) }
         o[typeOf<Set<*>>()] = { type, past, kproperty, token -> list(type, kproperty, token, past).toSet() }
-        o[typeOf<Map<*,*>>()] =
+        o[typeOf<Map<*, *>>()] =
             { type, past, kproperty, token -> map(type, kproperty, token, past) }
 
         o[typeOf<File>()] = { _, _, kproperty, token -> File(aString(token)) }
         o[typeOf<Date>()] = { _, _, kproperty, token -> Date(aLong(token)) }
-        o[typeOf<Instant>()] = { _, _, kproperty, token -> Instant.ofEpochMilli(aLong(token)) }
+        o[typeOf<Instant>()] = { _, _, kproperty, token ->
+            Instant.ofEpochMilli(Seed.seed + aLong(token, -ofDays(100).toMillis(), ofDays(100).toMillis())).truncatedTo(ChronoUnit.MICROS)
+        }
         o[typeOf<UUID>()] = { _, _, kproperty, token -> UUID.randomUUID() }
     }
 
@@ -122,6 +127,7 @@ internal object CreationLogic {
         max?.let { pseudoRandom(token).nextInt(it) } ?: pseudoRandom(token).nextInt()
 
     private fun aLong(token: Long): Long = pseudoRandom(token).nextLong()
+    private fun aLong(token: Long, min: Long, max: Long): Long = pseudoRandom(token).nextLong(min, max)
     private fun aDouble(token: Long): Double = pseudoRandom(token).nextDouble()
     private fun aShort(token: Long): Short = pseudoRandom(token).nextInt(Short.MAX_VALUE.toInt()).toShort()
     private fun aFloat(token: Long): Float = pseudoRandom(token).nextFloat()
@@ -205,7 +211,7 @@ internal object CreationLogic {
     ): Array<Any?> {
         val genericType = type.arguments.first().type!!
         val list = aList(genericType, token, past.plus(klass), kProperty)
-        val array = newInstance(genericType.jvmErasure!!.java, list.size) as Array<Any?>
+        val array = newInstance(genericType.jvmErasure.java, list.size) as Array<Any?>
         return array.apply { list.forEachIndexed { index, any -> array[index] = any } }
     }
 

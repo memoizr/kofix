@@ -2,9 +2,11 @@ package ro.kreator
 
 
 import com.memoizr.assertk.expect
+import com.memoizr.assertk.isEqualTo
 import com.memoizr.assertk.notNull
 import com.memoizr.assertk.of
 import org.junit.Test
+import java.time.Instant
 
 data class InvertedGenerics<out A, out B, in C>(private val x: C, val b: B, val a: A)
 
@@ -56,5 +58,14 @@ class CustomizeTest {
         expect that p3b.t3b isEqualTo 33
         expect that p4.t4 isEqualTo 4
         expect that p5.t5 isEqualTo 5
+    }
+
+    private data class MyInstant(val instant: Instant)
+    val now = Instant.now()
+    private val myInstant by aRandom<MyInstant>()
+    @Test
+    fun `can customize instant`() {
+        customize<Instant> { now }
+        myInstant.instant isEqualTo now
     }
 }

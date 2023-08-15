@@ -1,11 +1,9 @@
 package ro.kreator
 
-import java.util.*
-
 object Seed {
     internal var testing = false
 
-    var seed = Random().nextLong()
+    var seed = System.currentTimeMillis()
         set(value) {
             field = value
             if (!testing) println("Random-Object-Kreator - Overriding seed: $value")
