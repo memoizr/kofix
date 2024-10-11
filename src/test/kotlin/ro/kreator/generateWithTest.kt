@@ -1,6 +1,7 @@
 package ro.kreator
 import com.memoizr.assertk.expect
 import org.junit.Test
+import ro.kreator.fixtures.SimpleClass
 
 class generateWithTest {
     init {

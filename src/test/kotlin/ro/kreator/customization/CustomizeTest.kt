@@ -1,4 +1,4 @@
-package ro.kreator
+package ro.kreator.customization
 
 
 import com.memoizr.assertk.expect
@@ -6,6 +6,8 @@ import com.memoizr.assertk.isEqualTo
 import com.memoizr.assertk.notNull
 import com.memoizr.assertk.of
 import org.junit.Test
+import ro.kreator.*
+import ro.kreator.fixtures.*
 import java.time.Instant
 
 data class InvertedGenerics<out A, out B, in C>(private val x: C, val b: B, val a: A)

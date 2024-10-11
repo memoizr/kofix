@@ -1,4 +1,4 @@
-package ro.kreator
+package ro.kreator.fixtures
 
 object Param0
 data class Param1<T1>(val t1: T1)

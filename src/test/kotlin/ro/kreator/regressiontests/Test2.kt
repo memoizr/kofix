@@ -1,8 +1,10 @@
-package ro.kreator
+package ro.kreator.regressiontests
 
 import com.memoizr.assertk.expect
 import com.memoizr.assertk.of
 import org.junit.Test
+import ro.kreator.FunkyVisualJava
+import ro.kreator.aRandom
 import java.io.File
 import java.io.Serializable
 

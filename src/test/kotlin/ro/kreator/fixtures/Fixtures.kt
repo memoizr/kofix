@@ -1,4 +1,4 @@
-package ro.kreator
+package ro.kreator.fixtures
 
 import java.math.BigDecimal
 
@@ -395,20 +395,20 @@ data class Impl18Interface15(val x: String) : Interface15
 data class Impl19Interface15(val x: String) : Interface15
 
 data class Fooed(
-        val val1: List<Interface1>,
-        val val2: List<Interface2>,
-        val val3: List<Interface3>,
-        val val4: List<Interface4>,
-        val val5: List<Interface5>,
-        val val6: List<Interface6>,
-        val val7: List<Interface7>,
-        val val8: List<Interface8>,
-        val val9: List<Interface9>,
-        val val10: List<Interface10>,
-        val val11: List<Interface11>,
-        val val12: List<Interface12>,
-        val val13: List<Interface13>,
-        val val14: List<Interface14>,
-        val val15: List<Interface15>,
-        val sealed: List<SealedClass>
+    val val1: List<Interface1>,
+    val val2: List<Interface2>,
+    val val3: List<Interface3>,
+    val val4: List<Interface4>,
+    val val5: List<Interface5>,
+    val val6: List<Interface6>,
+    val val7: List<Interface7>,
+    val val8: List<Interface8>,
+    val val9: List<Interface9>,
+    val val10: List<Interface10>,
+    val val11: List<Interface11>,
+    val val12: List<Interface12>,
+    val val13: List<Interface13>,
+    val val14: List<Interface14>,
+    val val15: List<Interface15>,
+    val sealed: List<SealedClass>
 )

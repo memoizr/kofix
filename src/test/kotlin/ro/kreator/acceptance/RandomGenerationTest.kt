@@ -1,6 +1,6 @@
 @file:Suppress("UNCHECKED_CAST")
 
-package ro.kreator
+package ro.kreator.acceptance
 
 import com.memoizr.assertk.expect
 import com.memoizr.assertk.isEqualTo
@@ -9,12 +9,15 @@ import com.memoizr.assertk.notNull
 import com.memoizr.assertk.of
 import org.junit.Before
 import org.junit.Test
+import ro.kreator.*
+import ro.kreator.fixtures.*
 import java.io.File
 import java.math.BigDecimal
 import java.time.Instant
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
+@Suppress("MemberVisibilityCanBePrivate")
 class RandomGenerationTest {
     val aSimpleClass by aRandom<SimpleClass>()
     val anotherSimpleClass by aRandom<SimpleClass>()

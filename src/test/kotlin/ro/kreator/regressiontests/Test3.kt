@@ -1,7 +1,8 @@
-package ro.kreator
+package ro.kreator.regressiontests
 
 import com.memoizr.assertk.expect
 import org.junit.Test
+import ro.kreator.aRandomListOf
 import java.io.Serializable
 
 sealed class SendOption : Serializable
@@ -41,7 +42,8 @@ sealed class SupportedUser {
 
 data class WhatsappUserSendDestination(
         override val name: String,
-        override val photo: Image) : SupportedUser()
+        override val photo: Image
+) : SupportedUser()
 
 enum class SendType { URL, FILE }
 

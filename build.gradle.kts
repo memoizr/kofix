@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.20"
+    kotlin("jvm") version "2.0.21"
     `maven-publish`
     `java-library`
 }
@@ -16,18 +16,18 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("dom4j:dom4j:1.6.1")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.21")
+    implementation("org.dom4j:dom4j:2.1.4")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.21")
     implementation("org.apache.commons:commons-lang3:3.5")
     implementation("org.javassist:javassist:3.27.0-GA")
     implementation("io.github.classgraph:classgraph:4.8.95")
-    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.google.code.gson:gson:2.11.0")
 
     testImplementation("com.github.memoizr:assertk-core:-SNAPSHOT")
     testImplementation(kotlin("test-junit"))
 }
 
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
     kotlinOptions.freeCompilerArgs = listOf(
         "-Xcontext-receivers",

@@ -1,8 +1,9 @@
-package ro.kreator
+package ro.kreator.regressiontests
 
 import com.memoizr.assertk.expect
 import com.memoizr.assertk.notNull
 import org.junit.Test
+import ro.kreator.aRandom
 import java.io.File
 import java.io.Serializable
 
@@ -16,17 +17,16 @@ class Test {
 
 }
 
-data class Z(val y: String) : Interface1
-
 data class Clip(
-        val clipId: ClipId,
-        val thumbnail: Image,
-        val gif: Gif,
-        val video: Video,
-        val badge: Badge,
-        val category: Category,
-        val tags: List<Tag>,
-        val rightsHolder: RightsHolder) : Serializable
+    val clipId: ClipId,
+    val thumbnail: Image,
+    val gif: Gif,
+    val video: Video,
+    val badge: Badge,
+    val category: Category,
+    val tags: List<Tag>,
+    val rightsHolder: RightsHolder
+) : Serializable
 
 data class Size(val width: Int, val height: Int) : Serializable {
     fun heightAspect() = height.toFloat() / width
