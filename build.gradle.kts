@@ -28,7 +28,6 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
     kotlinOptions.freeCompilerArgs = listOf(
         "-Xcontext-receivers",
     )
