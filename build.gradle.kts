@@ -6,8 +6,8 @@ plugins {
     `java-library`
 }
 
-group = "com.memoizr"
-version = "1.0"
+group = "io.github.memoizr"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
@@ -46,9 +46,9 @@ tasks.withType<JavaCompile>() {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "com.memoizr"
-            artifactId = "momster"
-            version = "1.0"
+            groupId = "io.github.memoizr"
+            artifactId = "kofix"
+            version = "1.0.0"
 
             from(components["java"])
         }
