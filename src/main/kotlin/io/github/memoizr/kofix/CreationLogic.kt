@@ -121,7 +121,7 @@ internal object CreationLogic {
     }
 
     private val maxChar = 59319
-    private val maxStringLength = 5
+    private val maxStringLength = 10
 
     private fun aChar(token: Long): Char = pseudoRandom(token).nextInt(maxChar).toChar()
     private fun anInt(token: Long, max: Int? = null): Int =
@@ -135,7 +135,7 @@ internal object CreationLogic {
     private fun aByte(token: Long): Byte = pseudoRandom(token).nextInt(255).toByte()
     private fun aBoolean(token: Long): Boolean = pseudoRandom(token).nextBoolean()
     private fun aString(token: Long): String = pseudoRandom(token).let {
-        RandomStringUtils.random(Math.max(1, it.nextInt(maxStringLength)), 0, maxChar, true, true, null, it)
+        RandomStringUtils.random(Math.max(3, it.nextInt(maxStringLength)), 0, maxChar, true, true, null, it)
     }
 
     private val md = MessageDigest.getInstance("MD5")

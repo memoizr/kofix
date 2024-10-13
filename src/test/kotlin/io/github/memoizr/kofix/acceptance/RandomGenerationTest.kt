@@ -90,6 +90,7 @@ class RandomGenerationTest {
     fun `returns different results for different seeds`() {
         (1..100).map {
             Seed.seed = Random().nextLong()
+            println(aSimpleClass.name)
             aSimpleClass.name
         }.toSet().size isEqualTo 100
     }
